@@ -446,7 +446,7 @@ export default function Home() {
             <p className="text-xs text-gray-400 mt-0.5">Navigate any clinical system with AI</p>
           </div>
         </div>
-        <span className="text-xs text-gray-400 hidden sm:block">Powered by Claude Vision · Anthropic Hackathon 2026</span>
+        <span className="text-xs text-gray-400 hidden sm:block">Built with Claude Opus 4.7 · Cerebral Valley x Anthropic Hackathon 2026</span>
 
       </header>
 
@@ -772,11 +772,18 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-2 bg-[#f3f4f6] border-t border-gray-200 flex-shrink-0">
-        <p className="text-xs text-gray-400 text-center">
-          Navigation assistance only · Not medical advice · Follow your trust&apos;s local policies
-          <span className="hidden sm:inline"> · Built by a UCL medical student · Anthropic Hackathon 2026</span>
-        </p>
+      <div className="border-t border-gray-200 bg-[#f3f4f6] flex-shrink-0">
+        <div className="px-4 py-2 border-b border-gray-200">
+          <p className="text-xs text-gray-400 text-center">
+            Navigation assistance only · Not medical advice · Always follow your trust&apos;s local policies
+          </p>
+        </div>
+        <div className="px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <p className="text-xs text-gray-500 leading-relaxed max-w-2xl">
+            <span className="font-semibold text-[#1a1a1a]">Built by Arinze Okemuo</span>, a final-year UCL medical student who ruptured his patellar tendon, spent months unable to navigate research systems from bed, and built the tool he wished existed.
+          </p>
+          <span className="text-xs text-gray-400 whitespace-nowrap">Cerebral Valley x Anthropic · 2026</span>
+        </div>
       </div>
     </div>
   );
