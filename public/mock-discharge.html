@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NHS Discharge Summary — ClinicalConnect</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; background:#f0f2f5; font-size:13px; color:#1a1a1a; min-height:100vh; }
+
+.top-header { background:#003087; color:white; padding:0 20px; height:36px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10; }
+.nhs-logo { font-size:15px; font-weight:900; letter-spacing:1px; background:white; color:#003087; padding:2px 8px; border-radius:3px; }
+.header-right { font-size:11px; opacity:0.85; display:flex; gap:16px; align-items:center; }
+
+.patient-banner { background:#005eb8; color:white; padding:8px 20px; position:sticky; top:36px; z-index:9; }
+.patient-name { font-size:14px; font-weight:700; }
+.alert-badge { background:#da291c; color:white; padding:2px 7px; border-radius:3px; font-size:10px; font-weight:700; margin-left:8px; }
+.patient-meta { font-size:11px; opacity:0.85; margin-top:3px; display:flex; gap:16px; flex-wrap:wrap; }
+
+.doc-header { background:white; border-bottom:3px solid #003087; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; }
+.doc-title { font-size:18px; font-weight:700; color:#003087; }
+.doc-subtitle { font-size:11px; color:#6b7280; margin-top:2px; }
+.doc-status { display:flex; align-items:center; gap:8px; }
+.status-draft { background:#fef3c7; color:#92400e; padding:4px 12px; border-radius:4px; font-size:12px; font-weight:700; }
+
+.container { max-width:900px; margin:20px auto; padding:0 20px 40px; }
+
+.section { background:white; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.08); margin-bottom:12px; overflow:hidden; }
+.section-header { background:#f8fafc; border-bottom:1px solid #e5e7eb; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+.section-title { font-size:12px; font-weight:700; color:#003087; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:8px; }
+.section-num { width:20px; height:20px; background:#003087; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+.section-required { font-size:10px; color:#da291c; font-weight:600; }
+.section-body { padding:14px 16px; }
+
+.form-grid { display:grid; gap:12px; }
+.form-grid-2 { grid-template-columns:1fr 1fr; }
+.form-grid-3 { grid-template-columns:1fr 1fr 1fr; }
+
+.fg { display:flex; flex-direction:column; gap:4px; }
+.fg.span2 { grid-column:span 2; }
+.fg.span3 { grid-column:span 3; }
+.form-label { font-size:10px; font-weight:700; color:#374151; text-transform:uppercase; letter-spacing:0.3px; }
+.req { color:#da291c; }
+.form-input, .form-select, .form-textarea { border:1px solid #d0d5dd; border-radius:4px; padding:7px 10px; font-size:12px; font-family:inherit; color:#1a1a1a; background:white; width:100%; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { outline:none; border-color:#003087; box-shadow:0 0 0 2px rgba(0,48,135,0.1); }
+.form-textarea { resize:vertical; min-height:72px; line-height:1.5; }
+.form-input[readonly] { background:#f8fafc; color:#6b7280; }
+
+/* Med table */
+.med-table { width:100%; border-collapse:collapse; }
+.med-table th { background:#f8fafc; padding:7px 10px; text-align:left; font-size:10px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.4px; border-bottom:1px solid #e5e7eb; }
+.med-table td { padding:8px 10px; border-bottom:1px solid #f0f2f5; font-size:12px; vertical-align:top; }
+.med-table tr:last-child td { border-bottom:none; }
+.med-change { display:inline-block; padding:2px 6px; border-radius:3px; font-size:10px; font-weight:700; }
+.change-new { background:#d1fae5; color:#065f46; }
+.change-stopped { background:#fee2e2; color:#991b1b; text-decoration:line-through; }
+.change-dose { background:#fef3c7; color:#92400e; }
+.change-same { background:#f0f2f5; color:#6b7280; }
+.btn-add-row { background:none; border:1px dashed #d0d5dd; color:#6b7280; padding:6px 12px; border-radius:4px; font-size:11px; cursor:pointer; width:100%; margin-top:8px; }
+.btn-add-row:hover { border-color:#003087; color:#003087; background:#f8fafc; }
+
+/* Action buttons */
+.action-bar { background:white; border-top:1px solid #e5e7eb; padding:12px 20px; position:sticky; bottom:0; display:flex; gap:10px; justify-content:flex-end; box-shadow:0 -2px 8px rgba(0,0,0,0.06); }
+.btn { padding:8px 16px; border-radius:5px; font-size:12px; font-weight:700; cursor:pointer; border:none; font-family:inherit; transition:all 0.15s; }
+.btn-outline { background:white; color:#003087; border:1.5px solid #003087; }
+.btn-outline:hover { background:#f0f4ff; }
+.btn-secondary-action { background:#f8fafc; color:#374151; border:1px solid #d0d5dd; }
+.btn-secondary-action:hover { background:#f0f2f5; }
+.btn-complete { background:#003087; color:white; }
+.btn-complete:hover { background:#002266; }
+.btn-send { background:#007f3b; color:white; }
+.btn-send:hover { background:#005a28; }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="nhs-logo">NHS</div>
+  <div class="header-right">
+    <span>ClinicalConnect v8.3</span>
+    <span>|</span>
+    <span>👤 Dr A. Okemuo</span>
+    <span>|</span>
+    <span id="clock">09:45 · Fri 24 Apr 2026</span>
+  </div>
+</div>
+
+<div class="patient-banner">
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      <div><span class="patient-name">DEMO, James</span><span class="alert-badge">⚠ DEMO PATIENT — NO REAL DATA</span></div>
+      <div class="patient-meta">
+        <span>Male · 45y · DOB: 01/01/1980</span>
+        <span>NHS No: 000 000 0001</span>
+        <span>MRN: DEMO-001</span>
+        <span>Ward: ED Bay 4 → Discharge</span>
+        <span style="color:#fca5a5;">⚠ Allergy: Penicillin</span>
+      </div>
+    </div>
+    <div style="font-size:11px;text-align:right;opacity:0.85;">
+      <div>Admitted: 24 Apr 2026 08:47</div>
+      <div>Discharged: 24 Apr 2026 14:30</div>
+    </div>
+  </div>
+</div>
+
+<div class="doc-header">
+  <div>
+    <div class="doc-title">NHS Discharge Summary</div>
+    <div class="doc-subtitle">University College London Hospital · Document ID: DS-2026-00441</div>
+  </div>
+  <div class="doc-status">
+    <span class="status-draft">● DRAFT</span>
+    <span style="font-size:11px;color:#6b7280;">Auto-saved 09:44</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Section 1: Admission details -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-num">1</span> Admission Details</div>
+      <span class="section-required">Required</span>
+    </div>
+    <div class="section-body">
+      <div class="form-grid form-grid-3">
+        <div class="fg"><div class="form-label">Date of Admission <span class="req">*</span></div><input class="form-input" type="text" value="24/04/2026"></div>
+        <div class="fg"><div class="form-label">Date of Discharge <span class="req">*</span></div><input class="form-input" type="text" value="24/04/2026"></div>
+        <div class="fg"><div class="form-label">Length of Stay</div><input class="form-input" type="text" value="0 days (day case)" readonly></div>
+        <div class="fg"><div class="form-label">Admitting Ward <span class="req">*</span></div><input class="form-input" type="text" value="Emergency Department — Bay 4"></div>
+        <div class="fg"><div class="form-label">Admitting Consultant <span class="req">*</span></div><input class="form-input" type="text" value="Dr A. Okemuo"></div>
+        <div class="fg"><div class="form-label">Discharge Destination <span class="req">*</span></div>
+          <select class="form-select">
+            <option selected>Home (self)</option>
+            <option>Home with care package</option>
+            <option>Nursing home</option>
+            <option>Rehabilitation unit</option>
+            <option>Transfer to another hospital</option>
+          </select>
+        </div>
+        <div class="fg span3"><div class="form-label">GP / Practice <span class="req">*</span></div><input class="form-input" type="text" placeholder="GP name and practice address"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Presenting complaint -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-num">2</span> Reason for Admission / Presenting Complaint</div>
+      <span class="section-required">Required</span>
+    </div>
+    <div class="section-body">
+      <div class="fg"><div class="form-label">Presenting Complaint <span class="req">*</span></div>
+        <textarea class="form-textarea" placeholder="e.g., 45-year-old male presenting with head injury following fall at home. GCS 14/15, one episode vomiting, no LOC witnessed."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Clinical summary -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-num">3</span> Clinical Summary</div>
+      <span class="section-required">Required</span>
+    </div>
+    <div class="section-body form-grid">
+      <div class="fg"><div class="form-label">History <span class="req">*</span></div>
+        <textarea class="form-textarea" placeholder="Brief clinical history including relevant past medical history, social history, and medications on admission..."></textarea>
+      </div>
+      <div class="fg"><div class="form-label">Examination Findings</div>
+        <textarea class="form-textarea" placeholder="Relevant examination findings on admission and during stay..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Investigations -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-num">4</span> Investigations &amp; Results</div>
+    </div>
+    <div class="section-body form-grid">
+      <div class="fg"><div class="form-label">Bloods / Laboratory</div>
+        <textarea class="form-textarea" style="min-height:56px;" placeholder="e.g., FBC: Hb 138, WCC 9.2, Plts 245. U&E: Na 138, K 4.1, Cr 78. CRP 4."></textarea>
+      </div>
+      <div class="fg"><div class="form-label">Imaging</div>
+        <textarea class="form-textarea" style="min-height:56px;" placeholder="e.g., CT Head (24/04/26): No intracranial haemorrhage. No skull fracture. Normal appearances."></textarea>
+      </div>
+      <div class="fg"><div class="form-label">Outstanding Results</div>
+        <textarea class="form-textarea" style="min-height:56px;" placeholder="List any results not yet available at time of discharge..."></textarea>
+      </div>
+      <div class="fg"><div class="form-label">ECG / Other</div>
+        <textarea class="form-textarea" style="min-height:56px;" placeholder="ECG findings, microbiology, histology etc."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Diagnosis -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-num">5</span> Diagnosis on Discharge</div>
+      <span class="section-required">Required</span>
+    </div>
+    <div class="section-body form-grid">
+      <div class="fg"><div class="form-label">Primary Diagnosis <span class="req">*</span></div>
+        <input class="form-input" type="text" placeholder="e.g., Head injury — no intracranial pathology">
+      </div>
+      <div class="fg"><div class="form-label">Secondary Diagnoses</div>
+        <input class="form-input" type="text" placeholder="e.g., Hypertension (pre-existing)">
+      </div>
+      <div class="fg span2"><div class="form-label">Procedures Performed During Admission</div>
+        <input class="form-input" type="text" placeholder="e.g., CT Head (urgent), IV access, observations monitoring">
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Medications -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-num">6</span> Medications on Discharge</div>
+      <span class="section-required">Required — highlight all changes</span>
+    </div>
+    <div class="section-body">
+      <table class="med-table">
+        <thead>
+          <tr>
+            <th style="width:28%">Medication</th>
+            <th style="width:12%">Dose</th>
+            <th style="width:10%">Route</th>
+            <th style="width:15%">Frequency</th>
+            <th style="width:14%">Duration</th>
+            <th style="width:12%">Change</th>
+            <th style="width:9%">Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Amlodipine</td><td>5mg</td><td>PO</td><td>Once daily</td><td>Ongoing</td>
+            <td><span class="med-change change-same">No change</span></td><td>Hypertension</td>
+          </tr>
+          <tr>
+            <td>Paracetamol</td><td>1g</td><td>PO</td><td>QDS PRN</td><td>5 days</td>
+            <td><span class="med-change change-new">NEW</span></td><td>Analgesia</td>
+          </tr>
+          <tr>
+            <td><input class="form-input" type="text" placeholder="Add medication..."></td>
+            <td><input class="form-input" type="text" placeholder="Dose"></td>
+            <td><select class="form-select"><option>PO</option><option>IV</option><option>SC</option><option>IM</option><option>INH</option><option>TOP</option></select></td>
+            <td><input class="form-input" type="text" placeholder="Frequency"></td>
+            <td><input class="form-input" type="text" placeholder="Duration"></td>
+            <td><select class="form-select"><option>No change</option><option>NEW</option><option>Dose change</option><option>Stopped</option></select></td>
+            <td><input class="form-input" type="text" placeholder="Reason"></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn-add-row">+ Add medication row</button>
+      <div style="margin-top:12px;">
+        <div class="form-label" style="margin-bottom:4px;">Allergy / Adverse Drug Reactions</div>
+        <input class="form-input" type="text" value="Penicillin — rash (documented on system)" style="background:#fff5f5;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: Follow-up -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-num">7</span> Follow-up Arrangements</div>
+      <span class="section-required">Required</span>
+    </div>
+    <div class="section-body form-grid form-grid-2">
+      <div class="fg"><div class="form-label">Outpatient Follow-up <span class="req">*</span></div>
+        <textarea class="form-textarea" style="min-height:56px;" placeholder="e.g., No routine follow-up required. Return to ED if: worsening headache, vomiting, confusion, weakness, seizure."></textarea>
+      </div>
+      <div class="fg"><div class="form-label">GP Actions Required <span class="req">*</span></div>
+        <textarea class="form-textarea" style="min-height:56px;" placeholder="e.g., Review blood pressure at next appointment. No immediate action required."></textarea>
+      </div>
+      <div class="fg span2"><div class="form-label">Information Given to Patient / Carer</div>
+        <textarea class="form-textarea" style="min-height:48px;" placeholder="e.g., Head injury advice leaflet given. Patient advised to return to ED if symptoms worsen. Written safety-netting provided."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 8: Sign off -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-num">8</span> Clinician Sign-off</div>
+      <span class="section-required">Required</span>
+    </div>
+    <div class="section-body">
+      <div class="form-grid form-grid-3">
+        <div class="fg"><div class="form-label">Completed By <span class="req">*</span></div><input class="form-input" type="text" value="Dr A. Okemuo"></div>
+        <div class="fg"><div class="form-label">Grade / Role <span class="req">*</span></div>
+          <select class="form-select"><option>Foundation Year 1</option><option>Foundation Year 2</option><option selected>Core Trainee</option><option>Specialty Registrar</option><option>Consultant</option></select>
+        </div>
+        <div class="fg"><div class="form-label">Bleep / Contact <span class="req">*</span></div><input class="form-input" type="text" placeholder="Bleep number"></div>
+        <div class="fg"><div class="form-label">Date Completed</div><input class="form-input" type="text" value="24/04/2026" readonly></div>
+        <div class="fg"><div class="form-label">Electronic Signature</div><input class="form-input" type="text" placeholder="Type full name to sign"></div>
+        <div class="fg"><div class="form-label">Countersigning Consultant</div><input class="form-input" type="text" placeholder="If required"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Sticky action bar -->
+<div class="action-bar">
+  <button class="btn btn-secondary-action">🖨 Print Preview</button>
+  <button class="btn btn-outline">💾 Save Draft</button>
+  <button class="btn btn-complete">✓ Mark Complete</button>
+  <button class="btn btn-send">📨 Send to GP</button>
+</div>
+
+<script>
+function updateClock() {
+  const d = new Date();
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const t = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+  document.getElementById('clock').textContent = t + ' · ' + days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+updateClock();
+setInterval(updateClock, 15000);
+</script>
+</body>
+</html>

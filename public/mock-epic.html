@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClinicalConnect — Orders</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; background:#f0f2f5; font-size:13px; color:#1a1a1a; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+
+/* Top header */
+.top-header { background:#1e3a5f; color:white; padding:0 16px; height:34px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.logo { font-size:14px; font-weight:700; letter-spacing:0.5px; }
+.logo span { color:#7eb3e8; }
+.header-right { display:flex; align-items:center; gap:16px; font-size:11px; opacity:0.9; }
+.header-right .sep { opacity:0.3; }
+
+/* Patient banner */
+.patient-banner { background:#2d5a8e; color:white; padding:7px 16px; flex-shrink:0; }
+.patient-name { font-size:15px; font-weight:700; }
+.alert-badge { background:#c8102e; color:white; padding:2px 7px; border-radius:3px; font-size:10px; font-weight:700; margin-left:8px; letter-spacing:0.3px; }
+.patient-meta { font-size:11px; opacity:0.85; margin-top:3px; display:flex; gap:16px; flex-wrap:wrap; }
+.meta-label { opacity:0.7; }
+.vitals-badge { background:rgba(255,255,255,0.15); padding:3px 10px; border-radius:3px; font-size:11px; }
+
+/* Nav tabs */
+.nav-tabs { background:#fff; border-bottom:2px solid #e5e7eb; padding:0 16px; display:flex; flex-shrink:0; }
+.tab { padding:9px 15px; font-size:12px; font-weight:500; color:#4b5563; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; white-space:nowrap; transition:all 0.1s; }
+.tab:hover { color:#1e3a5f; background:#f8fafc; }
+.tab.active { color:#1e3a5f; border-bottom-color:#1e3a5f; font-weight:700; }
+.tab.alert-tab { color:#c8102e; font-weight:600; }
+
+/* Main layout */
+.main-layout { display:flex; flex:1; overflow:hidden; }
+
+/* Sidebar */
+.order-nav { width:192px; background:#fff; border-right:1px solid #d0d5dd; overflow-y:auto; flex-shrink:0; }
+.order-nav-header { padding:7px 12px; font-size:10px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.8px; background:#f8fafc; border-bottom:1px solid #e5e7eb; }
+.nav-category { padding:8px 12px; font-size:12px; font-weight:600; color:#1e3a5f; cursor:pointer; display:flex; align-items:center; gap:6px; border-bottom:1px solid #f0f2f5; user-select:none; }
+.nav-category:hover { background:#eff6ff; }
+.arrow { font-size:9px; transition:transform 0.2s; display:inline-block; }
+.nav-subcategories { display:none; background:#fafbfc; border-bottom:1px solid #f0f2f5; }
+.nav-subcategory { padding:6px 12px 6px 26px; font-size:12px; color:#374151; cursor:pointer; }
+.nav-subcategory:hover { background:#eff6ff; color:#1e3a5f; }
+.nav-subcategory.active { background:#dbeafe; color:#1e3a5f; font-weight:600; }
+
+/* Main content */
+.main-content { flex:1; overflow-y:auto; padding:16px; }
+.panel-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.panel-title { font-size:14px; font-weight:700; color:#1e3a5f; }
+
+/* Buttons */
+.btn { padding:6px 13px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.15s; border:none; font-family:inherit; }
+.btn-primary { background:#1e3a5f; color:white; }
+.btn-primary:hover { background:#163050; }
+.btn-secondary { background:white; color:#1e3a5f; border:1.5px solid #1e3a5f; }
+.btn-secondary:hover { background:#eff6ff; }
+.btn-urgent { background:#c8102e; color:white; }
+.btn-urgent:hover { background:#a80d25; }
+
+/* Section label */
+.section-label { font-size:10px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.6px; padding:12px 0 6px; }
+
+/* Table */
+.data-table { width:100%; border-collapse:collapse; background:white; border-radius:6px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.07); margin-bottom:4px; }
+.data-table th { background:#f8fafc; padding:8px 12px; text-align:left; font-size:10px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #e5e7eb; }
+.data-table td { padding:9px 12px; border-bottom:1px solid #f0f2f5; font-size:12px; }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tr:hover td { background:#fafbff; }
+.badge { padding:2px 8px; border-radius:3px; font-size:10px; font-weight:700; }
+.badge-pending { background:#fef3c7; color:#92400e; }
+.badge-active { background:#d1fae5; color:#065f46; }
+.badge-completed { background:#f0f2f5; color:#6b7280; }
+.badge-urgent { background:#fee2e2; color:#991b1b; }
+
+/* Screens */
+.screen { display:none; }
+.screen.active { display:block; }
+
+/* Order form */
+.form-card { background:white; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.08); padding:20px; }
+.form-card-header { display:flex; align-items:center; gap:12px; padding-bottom:14px; border-bottom:1px solid #e5e7eb; margin-bottom:18px; }
+.form-icon { width:40px; height:40px; background:#dbeafe; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.form-title { font-size:15px; font-weight:700; color:#1e3a5f; }
+.form-subtitle { font-size:11px; color:#6b7280; margin-top:2px; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.fg { display:flex; flex-direction:column; gap:4px; }
+.fg.full { grid-column:1/-1; }
+.form-label { font-size:10px; font-weight:700; color:#374151; text-transform:uppercase; letter-spacing:0.3px; }
+.req { color:#c8102e; }
+.form-input, .form-select, .form-textarea { border:1px solid #d0d5dd; border-radius:4px; padding:7px 10px; font-size:12px; font-family:inherit; color:#1a1a1a; background:white; width:100%; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { outline:none; border-color:#1e3a5f; box-shadow:0 0 0 2px rgba(30,58,95,0.12); }
+.form-textarea { resize:vertical; min-height:68px; }
+.form-input[readonly] { background:#f8fafc; color:#6b7280; }
+
+/* Urgency picker */
+.urgency-row { display:flex; gap:8px; }
+.urgency-opt { flex:1; padding:9px 8px; border:2px solid #d0d5dd; border-radius:5px; text-align:center; cursor:pointer; font-size:11px; font-weight:600; line-height:1.4; transition:all 0.15s; }
+.urgency-opt:hover { border-color:#9ca3af; }
+.urgency-opt.sel-urgent { border-color:#c8102e; background:#fff5f5; color:#c8102e; }
+.urgency-opt.sel-soon { border-color:#d97706; background:#fffbeb; color:#b45309; }
+.urgency-opt.sel-routine { border-color:#1e3a5f; background:#eff6ff; color:#1e3a5f; }
+.urgency-sub { font-size:10px; font-weight:400; opacity:0.8; margin-top:2px; }
+
+/* Checkbox grid */
+.check-grid { display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:4px; }
+.check-item { display:flex; align-items:center; gap:5px; font-size:12px; cursor:pointer; }
+.check-item input { accent-color:#1e3a5f; }
+
+/* Form actions */
+.form-actions { display:flex; gap:8px; margin-top:18px; padding-top:14px; border-top:1px solid #e5e7eb; justify-content:flex-end; }
+
+/* Confirmation */
+.confirm-card { background:white; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.08); padding:40px 32px; text-align:center; max-width:500px; margin:0 auto; }
+.confirm-icon { width:52px; height:52px; background:#d1fae5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:26px; }
+.confirm-title { font-size:17px; font-weight:700; color:#1e3a5f; margin-bottom:10px; }
+.confirm-row { font-size:12px; color:#4b5563; margin-bottom:4px; }
+.confirm-id { font-size:11px; color:#9ca3af; margin-top:10px; }
+
+/* Status bar */
+.status-bar { background:#163050; color:white; padding:3px 16px; font-size:10px; display:flex; gap:20px; opacity:0.95; flex-shrink:0; }
+.status-bar .warn { color:#fca5a5; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="top-header">
+  <div class="logo">Clinical<span>Connect</span>&nbsp;<span style="font-size:10px;opacity:0.5;font-weight:400;">v8.3 · NHS</span></div>
+  <div class="header-right">
+    <span>👤 Dr A. Okemuo &nbsp;|&nbsp; Emergency Medicine</span>
+    <span class="sep">|</span>
+    <span>🏥 University College London Hospital</span>
+    <span class="sep">|</span>
+    <span id="clock">09:14 · Fri 24 Apr 2026</span>
+    <span style="cursor:pointer;opacity:0.6;">⚙</span>
+    <span style="cursor:pointer;color:#f87171;">✕ Sign Out</span>
+  </div>
+</div>
+
+<!-- Patient banner -->
+<div class="patient-banner">
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      <div style="display:flex;align-items:center;">
+        <span class="patient-name">DEMO, James</span>
+        <span class="alert-badge">⚠ DEMO PATIENT — NO REAL DATA</span>
+      </div>
+      <div class="patient-meta">
+        <span><span class="meta-label">Sex:</span> Male</span>
+        <span><span class="meta-label">DOB:</span> 01/01/1980 &nbsp;(45y)</span>
+        <span><span class="meta-label">NHS No:</span> 000 000 0001</span>
+        <span><span class="meta-label">MRN:</span> DEMO-001</span>
+        <span><span class="meta-label">Ward:</span> ED Bay 4</span>
+        <span><span class="meta-label">Consultant:</span> Dr A. Okemuo</span>
+        <span style="color:#fca5a5;"><span class="meta-label">⚠ Allergy:</span> Penicillin</span>
+      </div>
+    </div>
+    <div style="text-align:right;font-size:11px;">
+      <div style="opacity:0.8;">Admitted: 24 Apr 2026 &nbsp;08:47 &nbsp;|&nbsp; Emergency Encounter</div>
+      <div class="vitals-badge" style="margin-top:5px;display:inline-block;">GCS: 14/15 &nbsp;·&nbsp; HR: 98 bpm &nbsp;·&nbsp; BP: 142/88 &nbsp;·&nbsp; SpO₂: 97%</div>
+    </div>
+  </div>
+</div>
+
+<!-- Nav tabs -->
+<div class="nav-tabs">
+  <div class="tab" onclick="setTab(this)">Chart Review</div>
+  <div class="tab active" onclick="setTab(this)">Orders</div>
+  <div class="tab" onclick="setTab(this)">Results</div>
+  <div class="tab" onclick="setTab(this)">Medications</div>
+  <div class="tab" onclick="setTab(this)">Notes</div>
+  <div class="tab" onclick="setTab(this)">Referrals</div>
+  <div class="tab" onclick="setTab(this)">Discharge</div>
+  <div class="tab alert-tab" onclick="setTab(this)">⚠ Alerts (2)</div>
+</div>
+
+<!-- Main layout -->
+<div class="main-layout">
+
+  <!-- Sidebar -->
+  <div class="order-nav">
+    <div class="order-nav-header">Order Navigator</div>
+
+    <div class="nav-category" id="cat-imaging" data-mg="nav-imaging" onclick="toggleCat('imaging',this)">
+      <span class="arrow" id="arr-imaging">▶</span> Imaging
+    </div>
+    <div class="nav-subcategories" id="sub-imaging">
+      <div class="nav-subcategory" id="sub-ct" data-mg="nav-ct" onclick="goCT()">CT</div>
+      <div class="nav-subcategory">MRI</div>
+      <div class="nav-subcategory">X-Ray</div>
+      <div class="nav-subcategory">Ultrasound</div>
+      <div class="nav-subcategory">Echo</div>
+    </div>
+
+    <div class="nav-category" onclick="toggleCat('lab',this)">
+      <span class="arrow" id="arr-lab">▶</span> Laboratory
+    </div>
+    <div class="nav-subcategories" id="sub-lab">
+      <div class="nav-subcategory">FBC</div>
+      <div class="nav-subcategory">U&amp;E / Metabolic</div>
+      <div class="nav-subcategory">LFTs</div>
+      <div class="nav-subcategory">Coagulation</div>
+      <div class="nav-subcategory">Blood Gas</div>
+      <div class="nav-subcategory">Blood Culture</div>
+    </div>
+
+    <div class="nav-category" onclick="toggleCat('meds',this)">
+      <span class="arrow" id="arr-meds">▶</span> Medications
+    </div>
+    <div class="nav-subcategories" id="sub-meds">
+      <div class="nav-subcategory">Prescribe New</div>
+      <div class="nav-subcategory">Modify Dose</div>
+      <div class="nav-subcategory">Discontinue</div>
+      <div class="nav-subcategory">PRN / As Required</div>
+    </div>
+
+    <div class="nav-category" onclick="toggleCat('proc',this)">
+      <span class="arrow" id="arr-proc">▶</span> Procedures
+    </div>
+    <div class="nav-subcategories" id="sub-proc">
+      <div class="nav-subcategory">IV Access</div>
+      <div class="nav-subcategory">Urinary Catheter</div>
+      <div class="nav-subcategory">NG Tube</div>
+      <div class="nav-subcategory">Lumbar Puncture</div>
+    </div>
+
+    <div class="nav-category" onclick="toggleCat('ref',this)">
+      <span class="arrow" id="arr-ref">▶</span> Referrals
+    </div>
+    <div class="nav-subcategories" id="sub-ref">
+      <div class="nav-subcategory">Internal Referral</div>
+      <div class="nav-subcategory">Specialty Review</div>
+      <div class="nav-subcategory">Social Work</div>
+    </div>
+
+    <div class="nav-category" onclick="toggleCat('nursing',this)">
+      <span class="arrow" id="arr-nursing">▶</span> Nursing
+    </div>
+    <div class="nav-subcategories" id="sub-nursing">
+      <div class="nav-subcategory">Observations</div>
+      <div class="nav-subcategory">Fluid Balance</div>
+      <div class="nav-subcategory">Wound Care</div>
+      <div class="nav-subcategory">Pressure Area</div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-content">
+
+    <!-- Screen: Orders overview -->
+    <div id="screen-orders" class="screen active">
+      <div class="panel-header">
+        <div class="panel-title">Active Orders</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary" data-mg="btn-imaging-order" onclick="goCT()">+ Imaging Order</button>
+          <button class="btn btn-primary" data-mg="btn-add-order" onclick="goCT()">+ Add Order</button>
+        </div>
+      </div>
+
+      <div class="section-label">Imaging</div>
+      <table class="data-table">
+        <thead><tr><th>Order</th><th>Priority</th><th>Ordered By</th><th>Time</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Chest X-Ray (PA)</td>
+            <td>Routine</td>
+            <td>Dr A. Okemuo</td>
+            <td>08:52</td>
+            <td><span class="badge badge-active">In Progress</span></td>
+            <td><a href="#" style="color:#1e3a5f;font-size:11px;">View</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="section-label">Laboratory</div>
+      <table class="data-table">
+        <thead><tr><th>Order</th><th>Priority</th><th>Ordered By</th><th>Time</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td>FBC · U&amp;E · LFTs · CRP</td>
+            <td><span class="badge badge-urgent">Urgent</span></td>
+            <td>Dr A. Okemuo</td>
+            <td>08:50</td>
+            <td><span class="badge badge-pending">Specimen Due</span></td>
+            <td><a href="#" style="color:#1e3a5f;font-size:11px;">View</a></td>
+          </tr>
+          <tr>
+            <td>Clotting Screen</td>
+            <td><span class="badge badge-urgent">Urgent</span></td>
+            <td>Dr A. Okemuo</td>
+            <td>08:50</td>
+            <td><span class="badge badge-pending">Specimen Due</span></td>
+            <td><a href="#" style="color:#1e3a5f;font-size:11px;">View</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="section-label">Medications</div>
+      <table class="data-table">
+        <thead><tr><th>Medication</th><th>Dose</th><th>Route</th><th>Frequency</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Paracetamol</td><td>1g</td><td>PO</td><td>QDS PRN</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td><a href="#" style="color:#1e3a5f;font-size:11px;">Modify</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Screen: CT order form -->
+    <div id="screen-ct" class="screen">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">New Imaging Order — CT Head</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:2px;">Complete all required fields · Sign to submit to Radiology</div>
+        </div>
+        <button class="btn btn-secondary" onclick="goOrders()">← Back to Orders</button>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="form-icon">🔬</div>
+          <div>
+            <div class="form-title">CT Head</div>
+            <div class="form-subtitle">Radiology · CT Scanner Suite, Level 2 · Contact: Ext 4210</div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="fg full">
+            <div class="form-label">Priority <span class="req">*</span></div>
+            <div class="urgency-row">
+              <div class="urgency-opt sel-urgent" id="ou" data-mg="opt-urgent" onclick="selU('u')">🔴 URGENT<div class="urgency-sub">Within 1 hour<br>(NICE CG176)</div></div>
+              <div class="urgency-opt" id="os" data-mg="opt-soon" onclick="selU('s')">🟡 SOON<div class="urgency-sub">Within 8 hours</div></div>
+              <div class="urgency-opt" id="or2" data-mg="opt-routine" onclick="selU('r')">🟢 ROUTINE<div class="urgency-sub">Next available slot</div></div>
+            </div>
+          </div>
+
+          <div class="fg">
+            <div class="form-label">Study Type <span class="req">*</span></div>
+            <select class="form-select" data-mg="select-study-type">
+              <option selected>CT Head without contrast</option>
+              <option>CT Head with contrast</option>
+              <option>CT Head + CT Cervical Spine</option>
+              <option>CT Angiogram Head / Neck</option>
+            </select>
+          </div>
+
+          <div class="fg">
+            <div class="form-label">Requesting Clinician <span class="req">*</span></div>
+            <input class="form-input" type="text" value="Dr A. Okemuo" readonly>
+          </div>
+
+          <div class="fg full">
+            <div class="form-label">Clinical Indication <span class="req">*</span></div>
+            <textarea class="form-textarea" data-mg="input-indication" placeholder="e.g., Head injury following fall. GCS 14/15, one episode vomiting. NICE CG176 criteria met — request urgent CT to exclude intracranial haemorrhage."></textarea>
+          </div>
+
+          <div class="fg">
+            <div class="form-label">GCS at Presentation</div>
+            <input class="form-input" type="text" placeholder="e.g., 14/15">
+          </div>
+
+          <div class="fg">
+            <div class="form-label">Mechanism of Injury</div>
+            <select class="form-select">
+              <option value="">Select...</option>
+              <option>Fall — same level</option>
+              <option>Fall from height</option>
+              <option>Road traffic collision</option>
+              <option>Assault</option>
+              <option>Sports injury</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="fg full">
+            <div class="form-label">NICE CG176 Head Injury Criteria (tick all that apply) <span class="req">*</span></div>
+            <div class="check-grid">
+              <label class="check-item"><input type="checkbox"> GCS &lt;13 at any point</label>
+              <label class="check-item"><input type="checkbox" checked> GCS &lt;15 at 2h post-injury</label>
+              <label class="check-item"><input type="checkbox"> Suspected open/depressed skull fracture</label>
+              <label class="check-item"><input type="checkbox"> Any sign of basal skull fracture</label>
+              <label class="check-item"><input type="checkbox"> Post-traumatic seizure</label>
+              <label class="check-item"><input type="checkbox"> Focal neurological deficit</label>
+              <label class="check-item"><input type="checkbox" checked> Vomiting (≥2 episodes)</label>
+              <label class="check-item"><input type="checkbox"> Age ≥65 with LOC/amnesia</label>
+              <label class="check-item"><input type="checkbox"> Retrograde amnesia ≥30 min</label>
+              <label class="check-item"><input type="checkbox"> Dangerous mechanism of injury</label>
+              <label class="check-item"><input type="checkbox"> On anticoagulation</label>
+            </div>
+          </div>
+
+          <div class="fg">
+            <div class="form-label">Bleep / Contact</div>
+            <input class="form-input" type="text" placeholder="Your bleep number">
+          </div>
+
+          <div class="fg">
+            <div class="form-label">Special Instructions</div>
+            <input class="form-input" type="text" placeholder="e.g., Patient claustrophobic, wheelchair">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-secondary" data-mg="btn-cancel" onclick="goOrders()">Cancel</button>
+          <button class="btn btn-urgent" data-mg="btn-sign-submit" onclick="goConfirm()">✓ Sign &amp; Submit Order</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen: Confirmation -->
+    <div id="screen-confirm" class="screen">
+      <div class="confirm-card">
+        <div class="confirm-icon">✓</div>
+        <div class="confirm-title">CT Head Order Submitted to Radiology</div>
+        <div class="confirm-row">Priority: <strong>URGENT</strong> — Target time: within 1 hour</div>
+        <div class="confirm-row">Patient: DEMO, James &nbsp;|&nbsp; ED Bay 4</div>
+        <div class="confirm-row">Radiology notified &nbsp;·&nbsp; Portering request sent &nbsp;·&nbsp; Radiologist on call alerted</div>
+        <div class="confirm-id">Order ID: IMG-2026-0441 &nbsp;·&nbsp; Submitted 09:16 by Dr A. Okemuo</div>
+        <div style="margin-top:20px;display:flex;gap:8px;justify-content:center;">
+          <button class="btn btn-secondary" onclick="goOrders()">← Back to Orders</button>
+          <button class="btn btn-primary" onclick="goOrders()">Add Another Order</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Status bar -->
+<div class="status-bar">
+  <span>ClinicalConnect v8.3</span>
+  <span>Session: Dr A. Okemuo</span>
+  <span>Patient: DEMO, James (DEMO-001)</span>
+  <span class="warn">⚠ Demonstration interface only — this is not a real clinical system</span>
+</div>
+
+<script>
+function setTab(el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function toggleCat(id, el) {
+  const sub = document.getElementById('sub-' + id);
+  const arr = document.getElementById('arr-' + id);
+  const open = sub.style.display === 'block';
+  document.querySelectorAll('.nav-subcategories').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('.arrow').forEach(a => a.style.transform = '');
+  if (!open) {
+    sub.style.display = 'block';
+    if (arr) arr.style.transform = 'rotate(90deg)';
+  }
+}
+
+function goCT() {
+  document.getElementById('sub-imaging').style.display = 'block';
+  document.getElementById('arr-imaging').style.transform = 'rotate(90deg)';
+  document.querySelectorAll('.nav-subcategory').forEach(s => s.classList.remove('active'));
+  document.getElementById('sub-ct').classList.add('active');
+  showScreen('ct');
+}
+function goOrders() { showScreen('orders'); }
+function goConfirm() { showScreen('confirm'); }
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+function selU(t) {
+  document.getElementById('ou').className = 'urgency-opt';
+  document.getElementById('os').className = 'urgency-opt';
+  document.getElementById('or2').className = 'urgency-opt';
+  if (t==='u') document.getElementById('ou').className = 'urgency-opt sel-urgent';
+  if (t==='s') document.getElementById('os').className = 'urgency-opt sel-soon';
+  if (t==='r') document.getElementById('or2').className = 'urgency-opt sel-routine';
+}
+
+function updateClock() {
+  const d = new Date();
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const t = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+  document.getElementById('clock').textContent = t + ' · ' + days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+updateClock();
+setInterval(updateClock, 15000);
+</script>
+</body>
+</html>
