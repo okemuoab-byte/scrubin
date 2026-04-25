@@ -187,61 +187,61 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
     </div>
     <div class="nav-subcategories" id="sub-imaging">
       <div class="nav-subcategory" id="sub-ct" data-mg="nav-ct" onclick="goCT()">CT</div>
-      <div class="nav-subcategory">MRI</div>
-      <div class="nav-subcategory">X-Ray</div>
-      <div class="nav-subcategory">Ultrasound</div>
-      <div class="nav-subcategory">Echo</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🧲','MRI','Radiology · MRI Suite, Level 2')">MRI</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🩻','X-Ray','Radiology · X-Ray Dept, Level 1')">X-Ray</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🔊','Ultrasound','Radiology · Ultrasound, Level 1')">Ultrasound</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('❤️','Echocardiogram','Cardiology · Echo Lab, Level 3')">Echo</div>
     </div>
 
     <div class="nav-category" onclick="toggleCat('lab',this)">
       <span class="arrow" id="arr-lab">▶</span> Laboratory
     </div>
     <div class="nav-subcategories" id="sub-lab">
-      <div class="nav-subcategory">FBC</div>
-      <div class="nav-subcategory">U&amp;E / Metabolic</div>
-      <div class="nav-subcategory">LFTs</div>
-      <div class="nav-subcategory">Coagulation</div>
-      <div class="nav-subcategory">Blood Gas</div>
-      <div class="nav-subcategory">Blood Culture</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🩸','FBC','Haematology · Lab ext 3100')">FBC</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🧪','U&amp;E / Metabolic','Biochemistry · Lab ext 3100')">U&amp;E / Metabolic</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🧫','LFTs','Biochemistry · Lab ext 3100')">LFTs</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('💉','Coagulation','Haematology · Lab ext 3100')">Coagulation</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🫁','Blood Gas','Point of Care · Bedside')">Blood Gas</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🦠','Blood Culture','Microbiology · Lab ext 3200')">Blood Culture</div>
     </div>
 
     <div class="nav-category" onclick="toggleCat('meds',this)">
       <span class="arrow" id="arr-meds">▶</span> Medications
     </div>
     <div class="nav-subcategories" id="sub-meds">
-      <div class="nav-subcategory">Prescribe New</div>
-      <div class="nav-subcategory">Modify Dose</div>
-      <div class="nav-subcategory">Discontinue</div>
-      <div class="nav-subcategory">PRN / As Required</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('💊','Prescribe Medication','Pharmacy · Dispensary ext 2210')">Prescribe New</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('✏️','Modify Dose','Pharmacy · Dispensary ext 2210')">Modify Dose</div>
+      <div class="nav-subcategory" onclick="showToast('Medication discontinued')">Discontinue</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('⏱️','PRN Medication','As required · specify indication')">PRN / As Required</div>
     </div>
 
     <div class="nav-category" onclick="toggleCat('proc',this)">
       <span class="arrow" id="arr-proc">▶</span> Procedures
     </div>
     <div class="nav-subcategories" id="sub-proc">
-      <div class="nav-subcategory">IV Access</div>
-      <div class="nav-subcategory">Urinary Catheter</div>
-      <div class="nav-subcategory">NG Tube</div>
-      <div class="nav-subcategory">Lumbar Puncture</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('💧','IV Access','Nursing · Ward staff')">IV Access</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🔵','Urinary Catheter','Nursing · Ward staff')">Urinary Catheter</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🟠','NG Tube','Nursing · Ward staff')">NG Tube</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🔬','Lumbar Puncture','Neurology · SpR on call')">Lumbar Puncture</div>
     </div>
 
     <div class="nav-category" onclick="toggleCat('ref',this)">
       <span class="arrow" id="arr-ref">▶</span> Referrals
     </div>
     <div class="nav-subcategories" id="sub-ref">
-      <div class="nav-subcategory">Internal Referral</div>
-      <div class="nav-subcategory">Specialty Review</div>
-      <div class="nav-subcategory">Social Work</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('📨','Internal Referral','Specialty teams · via switchboard')">Internal Referral</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('👨‍⚕️','Specialty Review','On-call registrar · via switchboard')">Specialty Review</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🤝','Social Work','Social Services · ext 4400')">Social Work</div>
     </div>
 
     <div class="nav-category" onclick="toggleCat('nursing',this)">
       <span class="arrow" id="arr-nursing">▶</span> Nursing
     </div>
     <div class="nav-subcategories" id="sub-nursing">
-      <div class="nav-subcategory">Observations</div>
-      <div class="nav-subcategory">Fluid Balance</div>
-      <div class="nav-subcategory">Wound Care</div>
-      <div class="nav-subcategory">Pressure Area</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('📊','Observations','Nursing · Frequency and parameters')">Observations</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('💧','Fluid Balance','Nursing · Input/output monitoring')">Fluid Balance</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🩹','Wound Care','Tissue viability · Dressing protocol')">Wound Care</div>
+      <div class="nav-subcategory" onclick="showGenericOrder('🛏️','Pressure Area Care','Nursing · Repositioning schedule')">Pressure Area</div>
     </div>
   </div>
 
@@ -427,8 +427,120 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
       </div>
     </div>
 
+    <!-- Screen: Generic order form -->
+    <div id="screen-generic" class="screen">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title" id="generic-title">New Order</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:2px;">Complete all required fields</div>
+        </div>
+        <button class="btn btn-secondary" onclick="goOrders()">← Back to Orders</button>
+      </div>
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="form-icon" id="generic-icon">📋</div>
+          <div>
+            <div class="form-title" id="generic-subtitle">Order Form</div>
+            <div class="form-subtitle" id="generic-dept">Department · Contact on call</div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="fg full"><div class="form-label">Priority <span class="req">*</span></div>
+            <div class="urgency-row">
+              <div class="urgency-opt" onclick="this.className='urgency-opt sel-urgent';this.parentNode.querySelectorAll('.urgency-opt').forEach(o=>o!==this&&(o.className='urgency-opt'))">🔴 URGENT<div class="urgency-sub">Immediate</div></div>
+              <div class="urgency-opt sel-routine" onclick="this.className='urgency-opt sel-soon';this.parentNode.querySelectorAll('.urgency-opt').forEach(o=>o!==this&&(o.className='urgency-opt'))">🟡 SOON<div class="urgency-sub">Within 8 hours</div></div>
+              <div class="urgency-opt" onclick="this.className='urgency-opt sel-routine';this.parentNode.querySelectorAll('.urgency-opt').forEach(o=>o!==this&&(o.className='urgency-opt'))">🟢 ROUTINE<div class="urgency-sub">Next available</div></div>
+            </div>
+          </div>
+          <div class="fg"><div class="form-label">Requesting Clinician <span class="req">*</span></div><input class="form-input" type="text" value="Dr A. Okemuo" readonly></div>
+          <div class="fg"><div class="form-label">Bleep / Contact</div><input class="form-input" type="text" placeholder="Your bleep number"></div>
+          <div class="fg full"><div class="form-label">Clinical Indication <span class="req">*</span></div><textarea class="form-textarea" placeholder="Enter clinical indication and relevant history…"></textarea></div>
+          <div class="fg full"><div class="form-label">Special Instructions</div><input class="form-input" type="text" placeholder="Any special requirements or contraindications"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="goOrders()">Cancel</button>
+          <button class="btn btn-urgent" onclick="showToast('Order submitted successfully');goOrders()">✓ Sign &amp; Submit Order</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen: Results tab -->
+    <div id="screen-results" class="screen">
+      <div class="panel-header"><div class="panel-title">Results</div></div>
+      <table class="data-table">
+        <thead><tr><th>Test</th><th>Result</th><th>Reference Range</th><th>Status</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr><td>Haemoglobin</td><td>138 g/L</td><td>130–170</td><td><span class="badge badge-active">Normal</span></td><td>09:15</td></tr>
+          <tr><td>White Cell Count</td><td>9.2 ×10⁹/L</td><td>4.0–11.0</td><td><span class="badge badge-active">Normal</span></td><td>09:15</td></tr>
+          <tr><td>Platelets</td><td>245 ×10⁹/L</td><td>150–400</td><td><span class="badge badge-active">Normal</span></td><td>09:15</td></tr>
+          <tr><td>Sodium</td><td>138 mmol/L</td><td>135–145</td><td><span class="badge badge-active">Normal</span></td><td>09:15</td></tr>
+          <tr><td>Potassium</td><td>4.1 mmol/L</td><td>3.5–5.0</td><td><span class="badge badge-active">Normal</span></td><td>09:15</td></tr>
+          <tr><td>Creatinine</td><td>78 µmol/L</td><td>60–110</td><td><span class="badge badge-active">Normal</span></td><td>09:15</td></tr>
+          <tr><td>CRP</td><td>4 mg/L</td><td>&lt;5</td><td><span class="badge badge-active">Normal</span></td><td>09:15</td></tr>
+          <tr><td>INR</td><td><strong style="color:#c8102e">1.8</strong></td><td>0.8–1.2</td><td><span class="badge badge-urgent">Elevated</span></td><td>09:20</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Screen: Medications tab -->
+    <div id="screen-medications" class="screen">
+      <div class="panel-header"><div class="panel-title">Current Medications</div><button class="btn btn-primary" onclick="showGenericOrder('💊','Prescribe Medication','Pharmacy · Dispensary ext 2210')">+ Prescribe</button></div>
+      <table class="data-table">
+        <thead><tr><th>Medication</th><th>Dose</th><th>Route</th><th>Frequency</th><th>Indication</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Amlodipine</td><td>5mg</td><td>PO</td><td>Once daily</td><td>Hypertension</td><td><span class="badge badge-active">Active</span></td><td><a href="#" style="color:#1e3a5f;font-size:11px;">Modify</a></td></tr>
+          <tr><td>Paracetamol</td><td>1g</td><td>PO</td><td>QDS PRN</td><td>Analgesia</td><td><span class="badge badge-active">Active</span></td><td><a href="#" style="color:#1e3a5f;font-size:11px;">Modify</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Screen: Notes tab -->
+    <div id="screen-notes" class="screen">
+      <div class="panel-header"><div class="panel-title">Clinical Notes</div><button class="btn btn-primary">+ New Note</button></div>
+      <div style="background:white;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,0.08);padding:16px;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-weight:600;font-size:13px;">ED Clerking Note</span><span style="font-size:11px;color:#6b7280;">Dr A. Okemuo · 08:55 · 24 Apr 2026</span></div>
+        <p style="font-size:12px;color:#374151;line-height:1.6;">45M presenting following unwitnessed fall at home. Found by wife. GCS 14/15 (E4V4M6) at scene, 14/15 on arrival. Single episode vomiting. No LOC reported. PMH: hypertension. Meds: amlodipine. NKDA (penicillin allergy documented). On examination: small laceration right temporal region, no skull deformity palpated, no focal neurology. NICE CG176 criteria met — urgent CT Head requested. IV access sited, obs monitoring commenced.</p>
+      </div>
+    </div>
+
+    <!-- Screen: Referrals tab -->
+    <div id="screen-referrals" class="screen">
+      <div class="panel-header"><div class="panel-title">Referrals</div><button class="btn btn-primary" onclick="showGenericOrder('📨','Internal Referral','Specialty teams · Bleep via switchboard')">+ New Referral</button></div>
+      <div style="background:#f8fafc;border-radius:6px;padding:32px;text-align:center;color:#6b7280;font-size:13px;">No active referrals for this patient.</div>
+    </div>
+
+    <!-- Screen: Discharge tab -->
+    <div id="screen-discharge" class="screen">
+      <div class="panel-header"><div class="panel-title">Discharge Planning</div></div>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:12px 16px;margin-bottom:12px;font-size:12px;color:#92400e;">⚠ Patient not yet ready for discharge — CT Head result pending.</div>
+      <div class="form-card">
+        <div class="form-grid form-grid-2">
+          <div class="fg"><div class="form-label">Planned Discharge Date</div><input class="form-input" type="text" placeholder="dd/mm/yyyy"></div>
+          <div class="fg"><div class="form-label">Destination</div><select class="form-select"><option>Home (self)</option><option>Home with support</option><option>Nursing home</option></select></div>
+          <div class="fg span2"><div class="form-label">Outstanding Tasks</div><textarea class="form-textarea" style="min-height:56px">- Await CT Head result&#10;- Review INR — consider haematology advice&#10;- Ensure safe mobility confirmed before discharge</textarea></div>
+        </div>
+        <div class="form-actions"><button class="btn btn-primary" onclick="window.open('/mock-discharge.html','_blank')">Open Discharge Summary →</button></div>
+      </div>
+    </div>
+
+    <!-- Screen: Alerts tab -->
+    <div id="screen-alerts" class="screen">
+      <div class="panel-header"><div class="panel-title">Active Alerts</div></div>
+      <div style="background:#fff5f5;border:1px solid #fecaca;border-radius:6px;padding:12px 16px;margin-bottom:8px;display:flex;gap:10px;align-items:start;">
+        <span style="font-size:18px">🚨</span>
+        <div><div style="font-weight:700;font-size:12px;color:#991b1b;">DRUG ALLERGY — Penicillin</div><div style="font-size:11px;color:#374151;margin-top:2px;">Reaction: Rash. Avoid all penicillin-class antibiotics including co-amoxiclav. Documented 2019.</div></div>
+      </div>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:12px 16px;display:flex;gap:10px;align-items:start;">
+        <span style="font-size:18px">⚠️</span>
+        <div><div style="font-weight:700;font-size:12px;color:#92400e;">ELEVATED INR — 1.8</div><div style="font-size:11px;color:#374151;margin-top:2px;">Coagulation result from 09:20. Consider implications for CT Head and any procedures. Review anticoagulation history.</div></div>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<!-- Toast notification -->
+<div id="toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e3a5f;color:white;padding:10px 20px;border-radius:8px;font-size:12px;font-weight:600;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2)"></div>
 
 <!-- Status bar -->
 <div class="status-bar">
@@ -442,6 +554,29 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
 function setTab(el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
+  const label = el.textContent.trim().toLowerCase();
+  if (label.includes('result')) showScreen('results');
+  else if (label.includes('medic')) showScreen('medications');
+  else if (label.includes('note')) showScreen('notes');
+  else if (label.includes('refer')) showScreen('referrals');
+  else if (label.includes('discharge')) showScreen('discharge');
+  else if (label.includes('alert')) showScreen('alerts');
+  else showScreen('orders');
+}
+
+function showGenericOrder(icon, title, dept) {
+  document.getElementById('generic-icon').textContent = icon;
+  document.getElementById('generic-title').textContent = 'New Order — ' + title;
+  document.getElementById('generic-subtitle').textContent = title;
+  document.getElementById('generic-dept').textContent = dept;
+  showScreen('generic');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = '✓ ' + msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2500);
 }
 
 function toggleCat(id, el) {
