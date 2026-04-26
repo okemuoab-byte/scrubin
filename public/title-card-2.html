@@ -11,41 +11,68 @@
     align-items: center;
     justify-content: center;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow: hidden;
   }
-  .container {
-    text-align: center;
-    padding: 60px;
-  }
+  .container { text-align: center; padding: 60px; }
+
   .eyebrow {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
-    color: #6b7280;
-    letter-spacing: 4px;
+    color: #4b5563;
+    letter-spacing: 6px;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadein 0.8s ease forwards 0.2s;
+    margin-bottom: 18px;
   }
   .logo {
-    font-size: 96px;
+    font-size: 108px;
     font-weight: 800;
     color: #ffffff;
-    letter-spacing: -4px;
+    letter-spacing: -5px;
     line-height: 1;
-    margin-bottom: 24px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: rise 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.5s;
+    margin-bottom: 22px;
   }
-  .logo span { color: #1a73e8; }
+  .logo .blue { color: #1a73e8; }
   .tagline {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 300;
-    color: #9ca3af;
-    letter-spacing: 0.5px;
+    color: #6b7280;
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: fadein 1s ease forwards 1.4s;
+    margin-bottom: 36px;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    background: #1a73e8;
+    border-radius: 50%;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadein 0.5s ease forwards 2s, breathe 2s ease-in-out infinite 2.5s;
+  }
+
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadein {
+    to { opacity: 1; }
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.6); opacity: 0.5; }
   }
 </style>
 </head>
 <body>
   <div class="container">
     <div class="eyebrow">Introducing</div>
-    <div class="logo">Scrub<span>In</span></div>
+    <div class="logo">Scrub<span class="blue">In</span></div>
     <div class="tagline">Navigate any clinical system with AI</div>
+    <div class="dot"></div>
   </div>
 </body>
 </html>
