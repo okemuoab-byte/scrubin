@@ -120,6 +120,20 @@ export default function Home() {
   const currentStepIdxRef = useRef(0);
 
   useEffect(() => { autoGuideRef.current = autoGuide; }, [autoGuide]);
+
+  // Window-level paste — fires even when iframe has focus
+  useEffect(() => {
+    const handler = (e: ClipboardEvent) => {
+      for (const item of (e.clipboardData?.items ?? [])) {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          if (file) { loadImageFile(file); break; }
+        }
+      }
+    };
+    window.addEventListener('paste', handler);
+    return () => window.removeEventListener('paste', handler);
+  }, []);
   useEffect(() => { activeStepsRef.current = activeSteps; }, [activeSteps]);
   useEffect(() => { currentStepIdxRef.current = currentStepIdx; }, [currentStepIdx]);
 
@@ -144,7 +158,7 @@ export default function Home() {
     return step.position;
   }, []);
 
-  // Animate cursor to a specific step
+  // Animate cursor to a specific step, auto-hide after the last one
   const goToStep = useCallback(async (idx: number, steps?: Step[]) => {
     const stepsToUse = steps ?? activeStepsRef.current;
     if (idx >= stepsToUse.length) return;
@@ -158,6 +172,11 @@ export default function Home() {
     setCursorClicking(true);
     await sleep(220);
     setCursorClicking(false);
+    // Hide cursor after the last step completes
+    if (idx === stepsToUse.length - 1) {
+      await sleep(1200);
+      setCursorVisible(false);
+    }
   }, [resolvePosition]);
 
   // Iframe click → auto-advance to next step
@@ -170,12 +189,26 @@ export default function Home() {
       const nextIdx = currentStepIdxRef.current + 1;
       if (nextIdx < activeStepsRef.current.length) {
         setTimeout(() => goToStep(nextIdx), 350);
+      } else if (activeStepsRef.current.length > 0) {
+        // All steps done — hide cursor
+        setTimeout(() => setCursorVisible(false), 400);
+      }
+    };
+
+    const onIframePaste = (e: Event) => {
+      const ce = e as ClipboardEvent;
+      for (const item of (ce.clipboardData?.items ?? [])) {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          if (file) { loadImageFile(file); break; }
+        }
       }
     };
 
     const attachListener = () => {
       try {
         iframe.contentDocument?.addEventListener('click', onIframeClick);
+        iframe.contentDocument?.addEventListener('paste', onIframePaste);
       } catch { /* cross-origin */ }
     };
 
@@ -435,7 +468,7 @@ export default function Home() {
   // ── Render ────────────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden" onPaste={handlePaste}>
+    <div className="flex flex-col h-screen overflow-hidden">
 
       {/* Header */}
       <header className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-gray-200 bg-white flex-shrink-0">
