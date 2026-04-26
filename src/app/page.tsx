@@ -311,6 +311,25 @@ export default function Home() {
 
   // ── Image upload/paste (for external sites) ───────────────────────
 
+  // Clipboard API paste — works regardless of focus/iframe state
+  const pasteFromClipboard = async () => {
+    try {
+      const items = await navigator.clipboard.read();
+      for (const item of items) {
+        const imageType = item.types.find(t => t.startsWith('image/'));
+        if (imageType) {
+          const blob = await item.getType(imageType);
+          const file = new File([blob], 'screenshot.png', { type: imageType });
+          loadImageFile(file);
+          return;
+        }
+      }
+      setError('No image in clipboard — take a screenshot first (⌘+Shift+4), then click Paste.');
+    } catch {
+      setError('Clipboard access denied. Use the Upload button instead, or click allow when Chrome asks.');
+    }
+  };
+
   const loadImageFile = (file: File) => {
     if (!file.type.startsWith('image/')) return;
     setMediaType(file.type);
@@ -539,6 +558,14 @@ export default function Home() {
               {/* Floating toolbar — top right */}
               <div className="absolute top-3 right-3 flex items-center gap-2 z-40">
                 <button
+                  onClick={pasteFromClipboard}
+                  className="text-xs px-3 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-lg font-medium shadow-md hover:bg-gray-50 transition-colors flex items-center gap-1.5"
+                  title="Paste a screenshot from clipboard (⌘+Shift+4 first)"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                  Paste screenshot
+                </button>
+                <button
                   onClick={() => {
                     sendMessage(input || (activeDemoUrl
                       ? DEMO_SCENARIOS.find(d => d.url === activeDemoUrl)?.question || 'What should I do next?'
@@ -621,9 +648,12 @@ export default function Home() {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                     Upload
                   </button>
-                  <div className="flex-1 flex items-center justify-center gap-2 py-2.5 border border-dashed border-gray-300 rounded-xl text-sm text-gray-400">
-                    <kbd className="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">⌘V</kbd> Paste
-                  </div>
+                  <button
+                    onClick={pasteFromClipboard}
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors font-medium">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                    Paste screenshot
+                  </button>
                 </div>
 
                 {/* External links */}
