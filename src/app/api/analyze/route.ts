@@ -61,10 +61,10 @@ If you see the ClinicalConnect EHR interface, use these exact element_id values 
 - "btn-sign-submit" → red "Sign & Submit Order" button
 - "btn-cancel" → Cancel button on form
 
-CRITICAL RULE — ONLY ANNOTATE WHAT IS VISIBLE NOW:
-Only return steps for UI elements you can actually SEE in the current screenshot. Do NOT include steps for screens, pages, or states that haven't appeared yet. If completing these steps will navigate to a new page, stop there and set needs_next_screenshot to true.
+CRITICAL RULE — ANNOTATE EVERYTHING VISIBLE ON THIS SCREEN:
+Return ALL the steps needed to complete the task using UI elements visible in the current screenshot. Aim for 3-5 steps per screen — do not be conservative. If a form is visible, guide through filling in ALL the key fields. Only set needs_next_screenshot to true if the remaining steps genuinely require navigating to a completely different page.
 
-This is turn-by-turn navigation — guide the current screen, then ask for the next one.
+Give complete guidance for the current screen. Multiple steps are better than one.
 
 IMPORTANT: Always respond with valid JSON in EXACTLY this format (no markdown, no extra text outside the JSON):
 {
