@@ -61,10 +61,10 @@ If you see the ClinicalConnect EHR interface, use these exact element_id values 
 - "btn-sign-submit" → red "Sign & Submit Order" button
 - "btn-cancel" → Cancel button on form
 
-CRITICAL RULE — ANNOTATE EVERYTHING VISIBLE ON THIS SCREEN:
-Return ALL the steps needed to complete the task using UI elements visible in the current screenshot. Aim for 3-5 steps per screen — do not be conservative. If a form is visible, guide through filling in ALL the key fields. Only set needs_next_screenshot to true if the remaining steps genuinely require navigating to a completely different page.
+CRITICAL RULE — 3 STEPS MAXIMUM, MOST IMPORTANT ACTIONS ONLY:
+Return exactly 2-3 steps. Focus only on the most critical actions to complete the task — do not annotate every field. For navigation: point to the key menu items to click. For forms: point to Priority, the main clinical field, and the Submit button only. Skip optional fields, checkboxes, and secondary inputs.
 
-Give complete guidance for the current screen. Multiple steps are better than one.
+Quality over quantity — 3 precise steps beats 8 scattered ones.
 
 IMPORTANT: Always respond with valid JSON in EXACTLY this format (no markdown, no extra text outside the JSON):
 {

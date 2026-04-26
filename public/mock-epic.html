@@ -183,9 +183,9 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
     <div class="order-nav-header">Order Navigator</div>
 
     <div class="nav-category" id="cat-imaging" data-mg="nav-imaging" onclick="toggleCat('imaging',this)">
-      <span class="arrow" id="arr-imaging">▶</span> Imaging
+      <span class="arrow" id="arr-imaging" style="transform:rotate(90deg)">▶</span> Imaging
     </div>
-    <div class="nav-subcategories" id="sub-imaging">
+    <div class="nav-subcategories" id="sub-imaging" style="display:block;">
       <div class="nav-subcategory" id="sub-ct" data-mg="nav-ct" onclick="goCT()">CT</div>
       <div class="nav-subcategory" onclick="showGenericOrder('🧲','MRI','Radiology · MRI Suite, Level 2')">MRI</div>
       <div class="nav-subcategory" onclick="showGenericOrder('🩻','X-Ray','Radiology · X-Ray Dept, Level 1')">X-Ray</div>
