@@ -317,6 +317,10 @@ export default function Home() {
       setIsCapturing(true);
       imageToUse = await captureIframe();
       setIsCapturing(false);
+      if (!imageToUse) {
+        setError('Could not capture the interface — wait for it to fully load and try again.');
+        return;
+      }
     }
     if (!imageToUse) return;
 
